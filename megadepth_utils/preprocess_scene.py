@@ -326,6 +326,7 @@ with open(output_file, 'w') as out_f:
         #     print(val)
         # exit()
         print(reprojection_errors)
+        print()
         
         # Example to integrate reprojection error into your output
         for i in range(len(points_3d_world)):
@@ -335,7 +336,7 @@ with open(output_file, 'w') as out_f:
             color = image[v.flatten()[i], u.flatten()[i]]
             r, g, b = color[2], color[1], color[0]
             error = reprojection_errors[i]  # Error for this point
-            print(error)
+            # print(error)
             if not print_mode:
                 out_f.write(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error}\n")
             else:
