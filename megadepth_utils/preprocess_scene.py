@@ -365,12 +365,16 @@ comparison = np.isclose(calculated_matrix, ground_truth_matrix, atol=0.01)
 
 # Find indices where comparison is False and print corresponding values
 false_indices = np.where(comparison == False)
-print("Indices and Values where comparison is False:")
-for idx in zip(false_indices[0], false_indices[1]):
+if len(false_indices[0]) == 0:
+    print("All values are the same.")
+else:
+    print("Indices and Values where comparison is False:")
     calc_value = calculated_matrix[idx]
     truth_value = ground_truth_matrix[idx]
     print(f"Index: {idx}, Calculated Value: {calc_value}, Ground Truth Value: {truth_value}")
 
+    for idx in zip(false_indices[0], false_indices[1]):
+        print(f"Index: {idx}, Value: {calculated_matrix[idx]}")
 print(f"Comparison Result (True means close enough): {comparison}")
 print()
 
