@@ -87,6 +87,29 @@ for camera in raw:
 
 info = np.load("/vol/bitbucket/tp4618/SuperGlueThesis/external/glue-factory/data/megadepth/scene_info/0001.npz", allow_pickle=True)   
 # ['image_paths', 'depth_paths', 'intrinsics', 'poses', 'overlap_matrix', 'scale_ratio_matrix', 'angles', 'n_points3D', 'points3D_id_to_2D', 'points3D_id_to_ndepth']
+# print(f"info['n_points3D'] type: {type(info['n_points3D'])}")
+# print(f"info['points3D_id_to_2D'] type: {type(info['points3D_id_to_2D'])}")
+# print(f"info['points3D_id_to_ndepth'] type: {type(info['points3D_id_to_ndepth'])}")
+print(f"info['n_points3D'] shape: {info['n_points3D'].shape}")
+print(f"info['points3D_id_to_2D'] shape: {info['points3D_id_to_2D'].shape}")
+print(f"info['points3D_id_to_ndepth'] shape: {info['points3D_id_to_ndepth'].shape}")
+
+count = 0
+i = 0
+while count < 3:
+    a = info['image_paths'][i]
+    i+=1
+    if a is not None:
+        print(a)
+        count += 1
+for i in range(1, 2):
+    # print(info['image_paths'][i])
+    print(info['n_points3D'][i])
+    print(info['points3D_id_to_2D'][i].keys())
+    print(info['points3D_id_to_ndepth'][i].keys())
+# print(info['n_points3D'])
+# print(info['points3D_id_to_2D'])
+# print(info['points3D_id_to_ndepth'])
 
 """
 head -n 5 points3D.txt 
@@ -162,6 +185,12 @@ def depth_to_3d(depth, K, depth_scale=1.0):
     height, width = depth.shape
     u, v = np.meshgrid(np.arange(width), np.arange(height))
     Z = depth * depth_scale  # Apply depth scale (relative to absolute)
+
+    mask = Z > 0
+    Z = Z[mask]
+    u = u[mask]
+    v = v[mask]
+    
     X = (u - c_x) * Z / f_x
     Y = (v - c_y) * Z / f_y
 
@@ -170,9 +199,9 @@ def depth_to_3d(depth, K, depth_scale=1.0):
     print("X values:", X[:10])
     print("Y values:", Y[:10])
 
-
-    points_3d = np.stack((X, Y, Z), axis=-1).reshape(-1, 3)
-    return points_3d
+    points_3d = np.stack((X, Y, Z), axis=-1)
+    points_2d = np.stack((u, v), axis=-1)
+    return points_3d, points_2d
 
 def transform_points(points_3d, R, t):
     """
@@ -274,14 +303,14 @@ with open(output_file, 'w') as out_f:
             #     print(d)
         print(f"depth shape: {depth.shape}")
         print(f"image shape: {image.shape}")
-        points_3d_camera = depth_to_3d(depth, K)
+        points_3d, observed_2d_points = depth_to_3d(depth, K)
         R = np.array(pose[:3, :3])
         t = np.array(pose[:3, 3])
-        print(f"points 3d camera: {points_3d_camera[:10]}")
-        points_3d_world = transform_points(points_3d_camera, R, t)
+        print(f"points 3d camera: {points_3d[:10]}")
+        points_3d_world = transform_points(points_3d, R, t)
 
         u, v = np.meshgrid(np.arange(width), np.arange(height))
-        observed_2d_points = np.vstack([u.flatten(), v.flatten()]).T
+        # observed_2d_points = np.vstack([u.flatten(), v.flatten()]).T
 
         # Project 3D points to 2D
         projected_2d_points = project_points_to_2d(points_3d_world, K, R, t)
@@ -297,8 +326,7 @@ with open(output_file, 'w') as out_f:
         #     print(val)
         # exit()
         print(reprojection_errors)
-        exit()
-
+        
         # Example to integrate reprojection error into your output
         for i in range(len(points_3d_world)):
             if i >10:
