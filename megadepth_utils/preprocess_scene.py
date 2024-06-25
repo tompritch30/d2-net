@@ -90,280 +90,313 @@ info = np.load("/vol/bitbucket/tp4618/SuperGlueThesis/external/glue-factory/data
 # print(f"info['n_points3D'] type: {type(info['n_points3D'])}")
 # print(f"info['points3D_id_to_2D'] type: {type(info['points3D_id_to_2D'])}")
 # print(f"info['points3D_id_to_ndepth'] type: {type(info['points3D_id_to_ndepth'])}")
-print(f"info['n_points3D'] shape: {info['n_points3D'].shape}")
-print(f"info['points3D_id_to_2D'] shape: {info['points3D_id_to_2D'].shape}")
-print(f"info['points3D_id_to_ndepth'] shape: {info['points3D_id_to_ndepth'].shape}")
+# print(f"info['n_points3D'] shape: {info['n_points3D'].shape}")
+# print(f"info['points3D_id_to_2D'] shape: {info['points3D_id_to_2D'].shape}")
+# print(f"info['points3D_id_to_ndepth'] shape: {info['points3D_id_to_ndepth'].shape}")
 
-count = 0
-i = 0
-while count < 3:
-    a = info['image_paths'][i]
-    i+=1
-    if a is not None:
-        print(a)
-        count += 1
-for i in range(1, 2):
-    # print(info['image_paths'][i])
-    print(info['n_points3D'][i])
-    print(info['points3D_id_to_2D'][i].keys())
-    print(info['points3D_id_to_ndepth'][i].keys())
+# count = 0
+# i = 0
+# while count < 3:
+#     a = info['image_paths'][i]
+#     i+=1
+#     if a is not None:
+#         print(a)
+#         count += 1
+# for i in range(1, 2):
+#     # print(info['image_paths'][i])
+#     print(info['n_points3D'][i])
+#     print(info['points3D_id_to_2D'][i].keys())
+#     print(info['points3D_id_to_ndepth'][i].keys())
 # print(info['n_points3D'])
 # print(info['points3D_id_to_2D'])
 # print(info['points3D_id_to_ndepth'])
 
 """
+cd /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/megadepth/Undistorted_SfM/0000/sparse-txt
 head -n 5 points3D.txt 
 # 3D point list with one line of data per point:
 #   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)
 # Number of points: 225128, mean track length: 19.4148
 416894 -38.9224 9.16377 18.9185 227 231 231 0.855131 5384 311 5604 5795 8816 5405 2261 6154 4025 2355 4902 10753 8805 7450 10742 9291 4895 2593
 """
+load_3d = False
 
-# print('Processing points3D.txt')
-# Process points3D.txt
-# with open(os.path.join(undistorted_sparse_path, 'points3D.txt'), 'r') as f:
-#     raw = f.readlines()[3 :]  # skip the header
+if load_3d:
+    print('Processing points3D.txt')
+    # Process points3D.txt
+    with open(os.path.join(undistorted_sparse_path, 'points3D.txt'), 'r') as f:
+        raw = f.readlines()[3 :]  # skip the header
 
-# points3D = {}
-# for point3D in raw:
-#     point3D = point3D.split(' ')
-#     points3D[int(point3D[0])] = np.array([
-#         float(point3D[1]), float(point3D[2]), float(point3D[3])
-#     ])
-    
+    points3D = {}
+    # Only need the 3D_id, x, y, z, information - rest can be omitted
+    for point3D in raw:
+        point3D = point3D.split(' ')
+        points3D[int(point3D[0])] = np.array([
+            float(point3D[1]), float(point3D[2]), float(point3D[3])
+        ])
+        
+else:
+    def load_depth_file(partial_file_path, base_directory):
+        import h5py
+        """
+        Load depth data from a .h5 file.
+        
+        Parameters:
+        partial_file_path (str): Partial path to the depth file.
+        base_directory (str): Base directory where depth files are stored.
+        
+        Returns:
+        np.array: Depth data.
+        """
+        # Adjust file path as needed
+        partial_path_elements = partial_file_path.split('/')
+        if len(partial_path_elements) > 4:
+            modified_path = os.path.join(partial_path_elements[-4], partial_path_elements[-1])
+            file_path = os.path.join(base_directory, modified_path)
+        else:
+            file_path = os.path.join(base_directory, partial_file_path)
 
-def load_depth_file(partial_file_path, base_directory):
-    import h5py
-    """
-    Load depth data from a .h5 file.
-    
-    Parameters:
-    partial_file_path (str): Partial path to the depth file.
-    base_directory (str): Base directory where depth files are stored.
-    
-    Returns:
-    np.array: Depth data.
-    """
-    # Adjust file path as needed
-    partial_path_elements = partial_file_path.split('/')
-    if len(partial_path_elements) > 4:
-        modified_path = os.path.join(partial_path_elements[-4], partial_path_elements[-1])
-        file_path = os.path.join(base_directory, modified_path)
-    else:
-        file_path = os.path.join(base_directory, partial_file_path)
-
-    # print(f"Loading depth file: {file_path}")
-    # print(f"Base directory: {base_directory}")
-    # print(f"Partial file path: {partial_file_path}")
-    # Check if the file exists and load it
-    if os.path.exists(file_path):
-        print(f"File found: {file_path}")
-        with h5py.File(file_path, 'r') as f:
-            data = f['depth'][:]
-        return data
-    else:
-        print(f"File not found: {file_path}")
-        exit()
-        # raise FileNotFoundError(f"File not found: {file_path}")
-
-
-def depth_to_3d(depth, K, depth_scale=1.0):
-    """
-    Convert depth map to 3D point cloud.
-    
-    Parameters:
-    depth (np.array): Depth map
-    K (np.array): Intrinsic matrix
-    depth_scale (float): Scale factor for depth values (default is 1.0)
-    
-    Returns:
-    np.array: 3D points in camera coordinates
-    """
-    f_x, f_y = K[0, 0], K[1, 1]
-    c_x, c_y = K[0, 2], K[1, 2]
-
-    height, width = depth.shape
-    u, v = np.meshgrid(np.arange(width), np.arange(height))
-    Z = depth * depth_scale  # Apply depth scale (relative to absolute)
-
-    mask = Z > 0
-    Z = Z[mask]
-    u = u[mask]
-    v = v[mask]
-    
-    X = (u - c_x) * Z / f_x
-    Y = (v - c_y) * Z / f_y
-
-    print("in the project 3d!!")
-    print("Z values:", Z[:10])  # print first 10 Z-values to inspect their range and distribution
-    print("X values:", X[:10])
-    print("Y values:", Y[:10])
-
-    points_3d = np.stack((X, Y, Z), axis=-1)
-    points_2d = np.stack((u, v), axis=-1)
-    return points_3d, points_2d
-
-def transform_points(points_3d, R, t):
-    """
-    Transform 3D points to world coordinates.
-    
-    Parameters:
-    points_3d (np.array): 3D points in camera coordinates
-    R (np.array): Rotation matrix
-    t (np.array): Translation vector
-    
-    Returns:
-    np.array: 3D points in world coordinates
-    """
-    return (R @ points_3d.T).T + t
-
-def project_points_to_2d(points_3d, intrinsic_matrix, R, t):
-    """ Project 3D points back to 2D using the camera intrinsic and extrinsic parameters. """
-    # Transform points from world to camera coordinates
-    points_3d_cam = np.dot(R.T, (points_3d - t).T).T  # Inverse transformation
-    # Project points to 2D
-    points_2d_hom = np.dot(intrinsic_matrix, points_3d_cam.T).T
-    # Avoid division by zero
-    small_number = 1e-10
-    points_2d_hom[:, 2] = np.where(points_2d_hom[:, 2] == 0, small_number, points_2d_hom[:, 2])
-    points_2d = points_2d_hom[:, :2] / points_2d_hom[:, 2, np.newaxis]
-    return points_2d
-
-    # points_2d = points_2d_hom[:, :2] / points_2d_hom[:, 2, np.newaxis]
-    # return points_2d
-
-def compute_reprojection_error(projected_2d, observed_2d):
-    """ Compute the Euclidean distance between the projected and observed 2D points. """
-    return np.linalg.norm(projected_2d - observed_2d, axis=1)
-
-import cv2
-
-# Initialize output file
-print_mode = True
-output_path = "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/d2-net"
-output_file = os.path.join(output_path, 'points3DTESTING.txt')
-with open(output_file, 'w') as out_f:
-    if not print_mode:
-        out_f.write("# 3D point list with one line of data per point:\n")
-        out_f.write("#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)\n")
-    else:
-        print("# 3D point list with one line of data per point:\n")
-        print("#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)\n")
-    
-    point_id = 0
-    # print(info)
-    # print(info['depth_paths'])
-
-    # for path in info['depth_paths']:
-    #     if path is not None:
-    #         print(f"depth_path: {path}")
-
-    skip_count = 0
-    count = 0
-    max_loops = 7
-    for idx, depth_path in enumerate(info['depth_paths']):
-        count +=1
-        if count > max_loops:
-            print("finish after 3 loops")
+        # print(f"Loading depth file: {file_path}")
+        # print(f"Base directory: {base_directory}")
+        # print(f"Partial file path: {partial_file_path}")
+        # Check if the file exists and load it
+        if os.path.exists(file_path):
+            print(f"File found: {file_path}")
+            with h5py.File(file_path, 'r') as f:
+                data = f['depth'][:]
+            return data
+        else:
+            print(f"File not found: {file_path}")
             exit()
-        image_path = info['image_paths'][idx]
-        intrinsic = info['intrinsics'][idx]
-        pose = info['poses'][idx]
+            # raise FileNotFoundError(f"File not found: {file_path}")
 
-        if image_path is None or depth_path is None:
-            skip_count += 1
-            continue
 
-        print(f"image_path: {image_path}")
-        print(f"intrinsic: {intrinsic}")
-        print(f"pose: {pose}")        
+    def depth_to_3d(depth, K, depth_scale=1.0):
+        """
+        Convert depth map to 3D point cloud.
+        
+        Parameters:
+        depth (np.array): Depth map
+        K (np.array): Intrinsic matrix
+        depth_scale (float): Scale factor for depth values (default is 1.0)
+        
+        Returns:
+        np.array: 3D points in camera coordinates
+        """
+        f_x, f_y = K[0, 0], K[1, 1]
+        c_x, c_y = K[0, 2], K[1, 2]
 
-        # raise Exception("Stop after loading the poses")       
-
-        # Load depth and image data
-        depth = load_depth_file(depth_path, base_depth_path)
-        final_image_path = os.path.join(images_path, image_path.split("/")[-1])
-        # print(f"final_image_path: {final_image_path}")
-        # print(f"image_path last: {image_path.split("/")[-1]}")
-        # print(f"imageSSS_path: {images_path}")
-
-        image = cv2.imread(final_image_path)
-
-        if depth is None or image is None:
-            continue
-    
-        height, width, _ = image.shape
-
-        # Convert depth to 3D points
-        K = np.array(intrinsic).reshape(3, 3)
-        print(f"K: {K}")
-        # for d in depth:
-        #     print(len(d))
-            # if d != 0:
-            #     print(d)
-        print(f"depth shape: {depth.shape}")
-        print(f"image shape: {image.shape}")
-        points_3d, observed_2d_points = depth_to_3d(depth, K)
-        R = np.array(pose[:3, :3])
-        t = np.array(pose[:3, 3])
-        print(f"points 3d camera: {points_3d[:10]}")
-        points_3d_world = transform_points(points_3d, R, t)
-
+        height, width = depth.shape
         u, v = np.meshgrid(np.arange(width), np.arange(height))
-        # observed_2d_points = np.vstack([u.flatten(), v.flatten()]).T
+        Z = depth * depth_scale  # Apply depth scale (relative to absolute)
 
-        # Project 3D points to 2D
-        projected_2d_points = project_points_to_2d(points_3d_world, K, R, t)
-
-        print("Points 3D World:", points_3d_world[:10])  # print first 10 for brevity
-
-        print("Projected 2D Points:", projected_2d_points[:10])  # print first 10 for brevity
-        print("Observed 2D Points:", observed_2d_points[:10])   # print first 10 for brevity
-
-        # Calculate reprojection error
-        reprojection_errors = compute_reprojection_error(projected_2d_points, observed_2d_points)
-        # for val in reprojection_errors:
-        #     print(val)
-        # exit()
-        print(reprojection_errors)
-        print()
+        mask = Z > 0
+        Z = Z[mask]
+        u = u[mask]
+        v = v[mask]
         
-        # Example to integrate reprojection error into your output
-        for i in range(len(points_3d_world)):
-            if i >10:
+        X = (u - c_x) * Z / f_x
+        Y = (v - c_y) * Z / f_y
+
+        # print("in the project 3d!!")
+        # print("Z values:", Z[:10])  # print first 10 Z-values to inspect their range and distribution
+        # print("X values:", X[:10])
+        # print("Y values:", Y[:10])
+
+        points_3d = np.stack((X, Y, Z), axis=-1)
+        points_2d = np.stack((u, v), axis=-1)
+        return points_3d, points_2d
+
+    def transform_points(points_3d, R, t):
+        """
+        Transform 3D points to world coordinates.
+        
+        Parameters:
+        points_3d (np.array): 3D points in camera coordinates
+        R (np.array): Rotation matrix
+        t (np.array): Translation vector
+        
+        Returns:
+        np.array: 3D points in world coordinates
+        """
+        return (R @ points_3d.T).T + t
+
+    def project_points_to_2d(points_3d, intrinsic_matrix, R, t):
+        """ Project 3D points back to 2D using the camera intrinsic and extrinsic parameters. """
+        # Transform points from world to camera coordinates
+        points_3d_cam = np.dot(R.T, (points_3d - t).T).T  # Inverse transformation
+        # Project points to 2D
+        points_2d_hom = np.dot(intrinsic_matrix, points_3d_cam.T).T
+        # Avoid division by zero
+        small_number = 1e-10
+        points_2d_hom[:, 2] = np.where(points_2d_hom[:, 2] == 0, small_number, points_2d_hom[:, 2])
+        points_2d = points_2d_hom[:, :2] / points_2d_hom[:, 2, np.newaxis]
+        return points_2d
+
+        # points_2d = points_2d_hom[:, :2] / points_2d_hom[:, 2, np.newaxis]
+        # return points_2d
+
+    def compute_reprojection_error(projected_2d, observed_2d):
+        """ Compute the Euclidean distance between the projected and observed 2D points. """
+        return np.linalg.norm(projected_2d - observed_2d, axis=1)
+
+    import cv2
+
+    # Initialize output file
+    print_mode = True
+    output_path = "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/d2-net"
+    output_file = os.path.join(output_path, 'points3DTESTING.txt')
+
+    with open(os.path.join(undistorted_sparse_path, 'images.txt'), 'r') as f:
+        raw = f.readlines()[4 :]  # skip the header
+
+
+
+    with open(output_file, 'w') as out_f:
+        if not print_mode:
+            out_f.write("# 3D point list with one line of data per point:\n")
+            out_f.write("#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)\n")
+        else:
+            print("# 3D point list with one line of data per point:\n")
+            print("#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)\n")
+        
+        point_id = 0
+        # print(info)
+        # print(info['depth_paths'])
+
+        # for path in info['depth_paths']:
+        #     if path is not None:
+        #         print(f"depth_path: {path}")
+
+        skip_count = 0
+        count = 0
+        max_loops = 7
+        
+        # for idx, depth_path in enumerate(info['depth_paths']):
+        
+        for idx, (image, points) in enumerate(zip(raw[::2], raw[1::2])):
+            image = image.split(' ')
+            points = points.split(' ')
+            image_id = int(image[0])
+            image_path = image[-1].strip()
+
+            count +=1
+            if count > max_loops:
+                print("finish after 3 loops")
                 exit()
-            point_3d = points_3d_world[i]
-            color = image[v.flatten()[i], u.flatten()[i]]
-            r, g, b = color[2], color[1], color[0]
-            error = reprojection_errors[i]  # Error for this point
-            # print(error)
-            if not print_mode:
-                out_f.write(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error}\n")
-            else:
-                print(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error}\n")
-            point_id += 1
-        
-        # for i in range(height):
-        #     for j in range(width):
-        #         point_3d = points_3d_world[i * width + j]
-        #         color = image[i, j]
-        #         r, g, b = color[2], color[1], color[0]
-        #         error = 0.0  # Placeholder for reprojection error
-        #         track = f"{idx} {i * width + j}"
+            
 
-        #         if not print_mode:
-        #             out_f.write(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error} {track}\n")
-        #         else:
-        #             print(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error} {track}\n")
-        #         point_id += 1
-    print(f"Skipped {skip_count} images")   
+            # image_path = info['image_paths'][idx]
+            for idx, img_path in enumerate(info['image_paths']):
+                if img_path is not None:
+                    # img_path = img_path.split('/')[-1]
+                    # print(img_path, image_path)                
+                    if image_path in img_path: # == image_path:
+                        print(f"image_path found: {image_path}")
+                        intrinsic = info['intrinsics'][idx]
+                        pose = info['poses'][idx]
+                        depth_path = info['depth_paths'][idx]
+                        break
+                else:
+                    depth_path = None
 
+            if image_path is None or depth_path is None:
+                skip_count += 1
+                continue
 
+            print(f"image_path: {image_path}")
+            print(f"intrinsic: {intrinsic}")
+            print(f"pose: {pose}")        
 
+            # raise Exception("Stop after loading the poses")       
 
+            # Load depth and image data
+            # NEED TO CHECK THIS
+            # depth_path = f"depth_{image_id}.h5"
+            depth = load_depth_file(depth_path, base_depth_path)
+            
+            
+            final_image_path = os.path.join(images_path, image_path.split("/")[-1])
+            print(f"final_image_path: {final_image_path}")
+            print(f"image_path last: {image_path.split("/")[-1]}")
+            print(f"imageSSS_path: {images_path}")
+
+            image = cv2.imread(final_image_path)
+
+            if depth is None or image is None:
+                continue
+
+            # Convert depth to 3D points
+            K = np.array(intrinsic).reshape(3, 3)
+            print(f"K: {K}")
+            # for d in depth:
+            #     print(len(d))
+                # if d != 0:
+                #     print(d)
+            print(f"depth shape: {depth.shape}")
+            print(f"image shape: {image.shape}")
+            
+            height, width, _ = image.shape
+            points_3d, observed_2d_points = depth_to_3d(depth, K)
+            R = np.array(pose[:3, :3])
+            t = np.array(pose[:3, 3])
+            print(f"points 3d camera: {points_3d[:10]}")
+            points_3d_world = transform_points(points_3d, R, t)
+
+            u, v = np.meshgrid(np.arange(width), np.arange(height))
+            # observed_2d_points = np.vstack([u.flatten(), v.flatten()]).T
+
+            # Project 3D points to 2D
+            projected_2d_points = project_points_to_2d(points_3d_world, K, R, t)
+
+            print("Points 3D World:", points_3d_world[:10])  # print first 10 for brevity
+
+            print("Projected 2D Points:", projected_2d_points[:10])  # print first 10 for brevity
+            print("Observed 2D Points:", observed_2d_points[:10])   # print first 10 for brevity
+
+            # Calculate reprojection error
+            reprojection_errors = compute_reprojection_error(projected_2d_points, observed_2d_points)
+            # for val in reprojection_errors:
+            #     print(val)
+            # exit()
+            print(reprojection_errors)
+            print()
+            
+            # Example to integrate reprojection error into your output
+            for i in range(len(points_3d_world)):
+                if i >10:
+                    exit()
+                point_3d = points_3d_world[i]
+                color = image[v.flatten()[i], u.flatten()[i]]
+                r, g, b = color[2], color[1], color[0]
+                error = reprojection_errors[i]  # Error for this point
+                # print(error)
+                if not print_mode:
+                    out_f.write(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error}\n")
+                else:
+                    print(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error}\n")
+                point_id += 1
+            
+            # for i in range(height):
+            #     for j in range(width):
+            #         point_3d = points_3d_world[i * width + j]
+            #         color = image[i, j]
+            #         r, g, b = color[2], color[1], color[0]
+            #         error = 0.0  # Placeholder for reprojection error
+            #         track = f"{idx} {i * width + j}"
+
+            #         if not print_mode:
+            #             out_f.write(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error} {track}\n")
+            #         else:
+            #             print(f"{point_id} {point_3d[0]} {point_3d[1]} {point_3d[2]} {r} {g} {b} {error} {track}\n")
+            #         point_id += 1
+        print(f"Skipped {skip_count} images")   
 
 
 """
+cd /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/megadepth/Undistorted_SfM/0000/sparse-txt
+head -n 5 images.txt
+
 # Image list with two lines of data per image:
 #   IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, NAME
 #   POINTS2D[] as (X, Y, POINT3D_ID)
@@ -387,6 +420,8 @@ print('Processing and all the data')
 for idx, (image, points) in enumerate(zip(raw[:: 2], raw[1 :: 2])):
     image = image.split(' ')
     points = points.split(' ')
+    # print(f"image: {image}")
+    # print(f"points: {points}")
 
     image_id_to_idx[int(image[0])] = idx
 
@@ -484,11 +519,26 @@ for idx, image_name in enumerate(image_names):
     # pose[: 3, 3] = -np.matmul(np.transpose(R), t)
     # pose[3, 3] = 1
     poses.append(current_pose)
-    
+    # print("\n\n\n\n")
+
+    ### testing
+    # points3D = {}
     current_points3D_id_to_ndepth = {}
     for point3D_id in points3D_id_to_2D[idx].keys():
-        p3d = points3D[point3D_id]
+        # Need the points 3D here
+        # print("points3D.keys()", points3D.keys())
+        p3d = points3D[point3D_id] # for testings = [ 0.678932, -1.05325,  -4.13398 ]
+        """
+        p3d: [ 0.678932 -1.05325  -4.13398 ]
+        point3D_id: 102677
+        """
+        # print(f"p3d: {p3d}")
+        # print(f"point3D_id: {point3D_id}")
+        # np.dot =  dot product of the third row of the rotation matrix R and the point's 3D coordinates p3d i.e. project Z into camera coordiante system
+        # t[2] = Z component of trnalsation vector to translate along Z axis
+        # then divide by .5 * (f_x + f_y) to normalise Z value = standardise depth
         current_points3D_id_to_ndepth[point3D_id] = (np.dot(R[2, :], p3d) + t[2]) / (.5 * (K[0, 0] + K[1, 1])) 
+        # print(f"current_points3D_id_to_ndepth[point3D_id]: {current_points3D_id_to_ndepth[point3D_id]}")
     points3D_id_to_ndepth.append(current_points3D_id_to_ndepth)
 principal_axis = np.array(principal_axis)
 angles = np.rad2deg(np.arccos(
