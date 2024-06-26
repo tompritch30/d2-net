@@ -250,7 +250,11 @@ else:
     with open(os.path.join(undistorted_sparse_path, 'images.txt'), 'r') as f:
         raw = f.readlines()[4 :]  # skip the header
 
+    # Create dictionary for points3D to 2D mapping
+    from collections import defaultdict
 
+    points3D_id_to_2D = defaultdict(list)
+    image_names = []
 
     with open(output_file, 'w') as out_f:
         if not print_mode:
@@ -285,6 +289,12 @@ else:
                 print("finish after 3 loops")
                 exit()
             
+            current_points3D_id_to_2D = {}
+            for x, y, point3D_id in zip(points[::3], points[1::3], points[2::3]):
+                if int(point3D_id) == -1:
+                    continue
+                points3D_id_to_2D[int(point3D_id)].append((float(x), float(y), image[-1].strip()))
+
 
             # image_path = info['image_paths'][idx]
             for idx, img_path in enumerate(info['image_paths']):
