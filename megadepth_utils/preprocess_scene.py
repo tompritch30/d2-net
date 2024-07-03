@@ -8,6 +8,11 @@ import os
 
 parser = argparse.ArgumentParser(description='MegaDepth preprocessing script')
 
+
+"""
+python preprocess_scene.py --base_path "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/megadepth" --scene_id "0001" --output_path "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/d2-net/testingOverlap"
+"""
+
 parser.add_argument(
     '--base_path', type=str, required=True,
     help='path to MegaDepth'
@@ -33,6 +38,8 @@ scene_id = args.scene_id
 base_depth_path = os.path.join(
     base_path, 'depth_undistorted' # 'phoenix/S6/zl548/MegaDepth_v1'
 )
+
+
 base_undistorted_sfm_path = os.path.join(
     base_path, 'Undistorted_SfM'
 )
@@ -189,6 +196,8 @@ for idx, image_name in enumerate(image_names):
     # pose[: 3, 3] = -np.matmul(np.transpose(R), t)
     # pose[3, 3] = 1
     poses.append(current_pose)
+
+    # print(intrinsics, current_pose, idx, image_name, depth_paths[idx] ,sep="\n")
     
     current_points3D_id_to_ndepth = {}
     for point3D_id in points3D_id_to_2D[idx].keys():
@@ -203,6 +212,109 @@ angles = np.rad2deg(np.arccos(
     )
 ))
 
+
+########
+def depth_to_3D(depth, K):
+    """ Convert depth map to 3D coordinates in the camera frame. """
+    m, n = depth.shape
+    x, y = np.meshgrid(np.arange(n), np.arange(m))
+    valid = depth > 0
+    z = depth[valid]
+    x = (x[valid] - K[0, 2]) * z / K[0, 0]
+    y = (y[valid] - K[1, 2]) * z / K[1, 1]
+    points_3D = np.vstack((x, y, z)).T
+    return points_3D, valid
+
+def transform_points(points_3D, pose):
+    """ Transform 3D points to world coordinates using the pose matrix. """
+    R = pose[:3, :3]
+    t = pose[:3, 3]
+    return points_3D @ R.T + t
+
+idx = 3
+print(intrinsics[idx], poses[idx], idx, depth_paths[idx], image_names[idx], sep="\n")
+# print(points3D_id_to_2D[idx].keys()[:3])
+# print(points3D_id_to_2D[idx].keys(), c) # 64486: [930.804, 389.738]
+# 38322: [155.694, 695.57]
+
+for k, v, in points3D_id_to_2D[idx].items():
+    if k == 64486:
+        print(k, v)
+
+for k, v, in points3D[idx]:
+    if k == 64486:
+        print(k, v)
+exit()
+# print(points3D[64486]) # [ 0.113039 -2.07074  12.7084  ]
+import h5py
+import numpy as np
+import cv2
+
+keyVal = 64486
+point_2d = points3D_id_to_2D[idx][keyVal] # np.array([930.804, 389.738]) #
+
+K = intrinsics[idx]
+pose = poses[idx]
+
+assert K.shape == (3, 3), "Intrinsic matrix K must be 3x3."
+assert pose.shape == (4, 4), "Pose matrix must be 4x4."
+
+# Paths to your depth map and image
+depth_file = depth_paths[idx]
+image_file = image_names[idx]
+
+base_image_path = os.path.join(
+    base_undistorted_sfm_path, scene_id, 'images'
+)
+
+depth_path = f"{base_path}/{depth_file}"
+image_path = f"{base_image_path}/{image_file}"
+
+# Function to load the depth map
+def load_depth(depth_path):
+    with h5py.File(depth_path, 'r') as file:
+        depth = np.array(file['depth'])
+    return depth
+
+# Load the depth map and print its shape
+depth_map = load_depth(depth_path)
+print("Depth map shape:", depth_map.shape)
+
+# Function to load the image
+def load_image(image_path):
+    image = cv2.imread(image_path)
+    return image
+
+# Load the image and print its shape
+image = load_image(image_path)
+print("Image shape:", image.shape)
+
+# Round the 2D point for indexing
+rounded_point_2d = np.round(point_2d).astype(int)
+
+# Get the depth value at the 2D point
+depth_value = depth_map[rounded_point_2d[1], rounded_point_2d[0]]
+
+# Convert the 2D point to 3D using the depth value
+x = (rounded_point_2d[0] - K[0, 2]) * depth_value / K[0, 0]
+y = (rounded_point_2d[1] - K[1, 2]) * depth_value / K[1, 1]
+z = depth_value
+point_3d_camera = np.array([x, y, z])
+
+# Transform the 3D point to world coordinates
+point_3d_world = transform_points(point_3d_camera, pose)
+
+# Print the transformed 3D point
+print("Transformed 3D point in world coordinates:", point_3d_world)
+
+# Ground truth 3D point for comparison
+ground_truth_3d = np.array([0.113039, -2.07074, 12.7084]) #points3D[keyVal] # 
+
+# Compare
+error = np.linalg.norm(point_3d_world - ground_truth_3d)
+print("Error compared to ground truth:", error)
+
+exit()
 # Compute overlap score
 overlap_matrix = np.full([n_images, n_images], -1.)
 scale_ratio_matrix = np.full([n_images, n_images], -1.)
@@ -230,6 +342,7 @@ for idx1 in range(n_images):
         min_scale_ratio = np.min(np.maximum(nd1 / nd2, nd2 / nd1))
         scale_ratio_matrix[idx1, idx2] = min_scale_ratio
         scale_ratio_matrix[idx2, idx1] = min_scale_ratio
+
 
 
 to_save = "0001"
