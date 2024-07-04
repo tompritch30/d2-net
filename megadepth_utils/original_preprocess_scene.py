@@ -6,39 +6,41 @@ import numpy as np
 
 import os
 
-"""
-python original_preprocess_scene.py --base_path "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/" --scene_id "SF_E_L_P001" --output_path "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/d2-net/testingOverlapSF_E_L_P001"
-"""
 
-parser = argparse.ArgumentParser(description='MegaDepth preprocessing script')
+# """
+# python original_preprocess_scene.py --base_path "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/" --scene_id "SF_E_L_P001" --output_path "/"
+# """
 
-parser.add_argument(
-    '--base_path', type=str, required=True,
-    help='path to MegaDepth'
-)
-parser.add_argument(
-    '--scene_id', type=str, required=True,
-    help='scene ID'
-)
+# parser = argparse.ArgumentParser(description='MegaDepth preprocessing script')
 
-parser.add_argument(
-    '--output_path', type=str, required=True,
-    help='path to the output directory'
-)
+# parser.add_argument(
+#     '--base_path', type=str, required=True,
+#     help='path to MegaDepth'
+# )
+# parser.add_argument(
+#     '--scene_id', type=str, required=True,
+#     help='scene ID'
+# )
 
-args = parser.parse_args()
+# parser.add_argument(
+#     '--output_path', type=str, required=False,
+#     help='path to the output directory'
+# )
 
-base_path = args.base_path
-# Remove the trailing / if need be.
-if base_path[-1] in ['/', '\\']:
-    base_path = base_path[: - 1]
-scene_id = args.scene_id
+# args = parser.parse_args()
 
-base_depth_path = os.path.join(
-    base_path, 'depthData' #'phoenix/S6/zl548/MegaDepth_v1'
-)
+# base_path = args.base_path
+# # Remove the trailing / if need be.
+# if base_path[-1] in ['/', '\\']:
+#     base_path = base_path[: - 1]
 
-## where the .txt files are
+# # scene_id = args.scene_id
+
+# base_depth_path = os.path.join(
+#     base_path, 'depthData' #'phoenix/S6/zl548/MegaDepth_v1'
+# )
+
+# # where the .txt files are
 # base_undistorted_sfm_path = os.path.join(
 #     base_path, 'imageData'
 # )
@@ -46,246 +48,275 @@ base_depth_path = os.path.join(
 # undistorted_sparse_path = os.path.join(
 #     base_undistorted_sfm_path, scene_id, 'sparse-txt'
 # )
+#########
 
-undistorted_sparse_path = os.path.join("/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/SF_E_L_P001_overlap/mvs_output")
-# base_depth_path = os.path.join("/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/depthData/SF_E_L_P001")
+directory_list = [
+    "SF_E_L_P001", "SF_E_L_P009", "SF_H_L_P006", "SFW_E_L_P001", "SFW_E_L_P008", "SFW_E_R_P005", "SFW_H_L_P012", "SFW_H_R_P010", "SFW_H_R_P017",
+    "SF_E_L_P002", "SF_E_L_P010", "SF_H_R_P001", "SFW_E_L_P002", "SFW_E_L_P009", "SFW_E_R_P006", "SFW_H_L_P013", "SFW_H_R_P011", "SFW_H_R_P018",
+    "SF_E_L_P003", "SF_E_L_P011", "SF_H_R_P002", "SFW_E_L_P003", "SFW_E_R_P000", "SFW_E_R_P007", "SFW_H_L_P014", "SFW_H_R_P012",
+    "SF_E_L_P004", "SF_H_L_P001", "SF_H_R_P004", "SFW_E_L_P004", "SFW_E_R_P001", "SFW_E_R_P008", "SFW_H_L_P015", "SFW_H_R_P013",
+    "SF_E_L_P005", "SF_H_L_P002", "SF_H_R_P005", "SFW_E_L_P005", "SFW_E_R_P002", "SFW_E_R_P009", "SFW_H_L_P016", "SFW_H_R_P014",
+    "SF_E_L_P007", "SF_H_L_P004", "SF_H_R_P006", "SFW_E_L_P006", "SFW_E_R_P003", "SFW_H_L_P010", "SFW_H_L_P017", "SFW_H_R_P015",
+    "SF_E_L_P008", "SF_H_L_P005", "SFW_E_L_P000", "SFW_E_L_P007", "SFW_E_R_P004", "SFW_H_L_P011", "SFW_H_L_P018", "SFW_H_R_P016"
+]
+base_path = "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/"
 
+for scene_id in directory_list:
+    undistorted_sparse_path = os.path.join(f"/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/{scene_id}/mvs_output/")
+    # base_depth_path = os.path.join("/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/depthData/SF_E_L_P001")
 
-if not os.path.exists(undistorted_sparse_path):
-    print(f"Undistorted sparse path does not exist {undistorted_sparse_path}")
-    exit()
-
-depths_path = os.path.join(
-    base_depth_path, scene_id, # 'dense0', 'depths'
-)
-if not os.path.exists(depths_path):
-    print(f"Depths path does not exist {depths_path}")
-    exit()
-
-images_path = os.path.join(
-    base_path, 'imageData', scene_id
-)
-if not os.path.exists(images_path):
-    print(f"Images path does not exist {images_path}")
-    exit()
-
-# Process cameras.txt
-with open(os.path.join(undistorted_sparse_path, 'cameras.txt'), 'r') as f:
-    raw = f.readlines()[3 :]  # skip the header
-
-camera_intrinsics = {}
-for camera in raw:
-    camera = camera.split(' ')
-    camera_intrinsics[int(camera[0])] = [float(elem) for elem in camera[2 :]]
-
-# Process points3D.txt
-with open(os.path.join(undistorted_sparse_path, 'points3D.txt'), 'r') as f:
-    raw = f.readlines()[3 :]  # skip the header
-
-# print(raw)
-# exit()
-
-points3D = {}
-for point3D in raw:
-    point3D = point3D.split(' ')
-    points3D[int(point3D[0])] = np.array([
-        float(point3D[1]), float(point3D[2]), float(point3D[3])
-    ])
     
-# Process images.txt
-with open(os.path.join(undistorted_sparse_path, 'images.txt'), 'r') as f:
-    raw = f.readlines()[4 :]  # skip the header
-
-image_id_to_idx = {}
-image_names = []
-raw_pose = []
-camera = []
-points3D_id_to_2D = []
-n_points3D = []
-for idx, (image, points) in enumerate(zip(raw[:: 2], raw[1 :: 2])):
-    image = image.split(' ')
-    points = points.split(' ')
-
-    image_id_to_idx[int(image[0])] = idx
-
-    image_name = image[-1].strip('\n')
-    image_names.append(image_name)
-
-    raw_pose.append([float(elem) for elem in image[1 : -2]])
-    camera.append(int(image[-2]))
-    current_points3D_id_to_2D = {}
-    skipCount = 0
-    for x, y, point3D_id in zip(points[:: 3], points[1 :: 3], points[2 :: 3]):
-        if int(point3D_id) == -1:
-            continue
-        # print("not skipping!, point3D_id", point3D_id)
-        current_points3D_id_to_2D[int(point3D_id)] = [float(x), float(y)]
-    points3D_id_to_2D.append(current_points3D_id_to_2D)
-    n_points3D.append(len(current_points3D_id_to_2D))
-n_images = len(image_names)
-print(n_images, "length n_imags")
-
-# Image and depthmaps paths
-image_paths = []
-depth_paths = []
-# print(len(image_names))
-for image_name in image_names:
-    image_path = os.path.join(images_path, image_name)
-    
-    # Path to the depth file
-    depth_path = os.path.join(
-        depths_path, '%s_depth.npy' % os.path.splitext(image_name)[0], 
+    base_depth_path = os.path.join(
+        base_path, 'depthData' #'phoenix/S6/zl548/MegaDepth_v1'
     )
-    
-    if os.path.exists(depth_path):
-        # Check if depth map or background / foreground mask
-        file_size = os.stat(depth_path).st_size
-        # Rough estimate - 75KB might work as well
-        if file_size < 100 * 1024:
+
+    # where the .txt files are
+    base_undistorted_sfm_path = os.path.join(
+        base_path, 'imageData'
+    )
+    if not os.path.exists(undistorted_sparse_path):
+        print(f"NO PATH FOR {scene_id}. Undistorted sparse path does not exist {undistorted_sparse_path}")
+        continue
+
+    depths_path = os.path.join(
+        base_depth_path, scene_id, # 'dense0', 'depths'
+    )
+    if not os.path.exists(depths_path):
+        print(f"Depths path does not exist {depths_path}")
+        continue
+
+    images_path = os.path.join(
+        base_path, 'imageData', scene_id
+    )
+    if not os.path.exists(images_path):
+        print(f"Images path does not exist {images_path}")
+        continue
+
+    # Process cameras.txt
+    try:
+        with open(os.path.join(undistorted_sparse_path, 'cameras.txt'), 'r') as f:
+            raw = f.readlines()[3 :]  # skip the header
+    except:
+        print(f"Cameras.txt does not exist {os.path.join(undistorted_sparse_path, 'cameras.txt')}")
+        continue
+
+    camera_intrinsics = {}
+    for camera in raw:
+        camera = camera.split(' ')
+        camera_intrinsics[int(camera[0])] = [float(elem) for elem in camera[2 :]]
+
+    # Process points3D.txt
+    with open(os.path.join(undistorted_sparse_path, 'points3D.txt'), 'r') as f:
+        raw = f.readlines()[3 :]  # skip the header
+
+    # print(raw)
+    # continue
+
+    points3D = {}
+    for point3D in raw:
+        point3D = point3D.split(' ')
+        points3D[int(point3D[0])] = np.array([
+            float(point3D[1]), float(point3D[2]), float(point3D[3])
+        ])
+        
+    # Process images.txt
+    with open(os.path.join(undistorted_sparse_path, 'images.txt'), 'r') as f:
+        raw = f.readlines()[4 :]  # skip the header
+
+    image_id_to_idx = {}
+    image_names = []
+    raw_pose = []
+    camera = []
+    points3D_id_to_2D = []
+    n_points3D = []
+    for idx, (image, points) in enumerate(zip(raw[:: 2], raw[1 :: 2])):
+        image = image.split(' ')
+        points = points.split(' ')
+
+        image_id_to_idx[int(image[0])] = idx
+
+        image_name = image[-1].strip('\n')
+        image_names.append(image_name)
+
+        raw_pose.append([float(elem) for elem in image[1 : -2]])
+        camera.append(int(image[-2]))
+        current_points3D_id_to_2D = {}
+        skipCount = 0
+        for x, y, point3D_id in zip(points[:: 3], points[1 :: 3], points[2 :: 3]):
+            if int(point3D_id) == -1:
+                continue
+            # print("not skipping!, point3D_id", point3D_id)
+            current_points3D_id_to_2D[int(point3D_id)] = [float(x), float(y)]
+        points3D_id_to_2D.append(current_points3D_id_to_2D)
+        n_points3D.append(len(current_points3D_id_to_2D))
+    n_images = len(image_names)
+    # print(n_images, "length n_imags")
+
+    # Image and depthmaps paths
+    image_paths = []
+    depth_paths = []
+    # print(len(image_names))
+    for image_name in image_names:
+        image_path = os.path.join(images_path, image_name)
+        
+        # Path to the depth file
+        depth_path = os.path.join(
+            depths_path, '%s_depth.npy' % os.path.splitext(image_name)[0], 
+        )
+        
+        if os.path.exists(depth_path):
+            # Check if depth map or background / foreground mask
+            file_size = os.stat(depth_path).st_size
+            # Rough estimate - 75KB might work as well
+            if file_size < 100 * 1024:
+                depth_paths.append(None)
+                image_paths.append(None)
+            else:
+                depth_paths.append(depth_path[len(base_path) + 1 :])
+                image_paths.append(image_path[len(base_path) + 1 :])
+        else:
+            # print(f"Depth path does not exist {depth_path}")
             depth_paths.append(None)
             image_paths.append(None)
-        else:
-            depth_paths.append(depth_path[len(base_path) + 1 :])
-            image_paths.append(image_path[len(base_path) + 1 :])
-    else:
-        print(f"Depth path does not exist {depth_path}")
-        depth_paths.append(None)
-        image_paths.append(None)
 
-# Camera configuration
-intrinsics = []
-poses = []
-principal_axis = []
-points3D_id_to_ndepth = []
-for idx, image_name in enumerate(image_names):
-    if image_paths[idx] is None:
-        intrinsics.append(None)
-        poses.append(None)
-        principal_axis.append([0, 0, 0])
-        points3D_id_to_ndepth.append({})
-        continue
-    image_intrinsics = camera_intrinsics[camera[idx]]
-    K = np.zeros([3, 3])
-    K[0, 0] = image_intrinsics[2]
-    K[0, 2] = image_intrinsics[4]
-    K[1, 1] = image_intrinsics[3]
-    K[1, 2] = image_intrinsics[5]
-    K[2, 2] = 1
-    intrinsics.append(K)
+    # Camera configuration
+    intrinsics = []
+    poses = []
+    principal_axis = []
+    points3D_id_to_ndepth = []
+    for idx, image_name in enumerate(image_names):
+        if image_paths[idx] is None:
+            intrinsics.append(None)
+            poses.append(None)
+            principal_axis.append([0, 0, 0])
+            points3D_id_to_ndepth.append({})
+            continue
+        image_intrinsics = camera_intrinsics[camera[idx]]
+        K = np.zeros([3, 3])
+        K[0, 0] = image_intrinsics[2]
+        K[0, 2] = image_intrinsics[4]
+        K[1, 1] = image_intrinsics[3]
+        K[1, 2] = image_intrinsics[5]
+        K[2, 2] = 1
+        intrinsics.append(K)
 
-    image_pose = raw_pose[idx]
-    qvec = image_pose[: 4]
-    qvec = qvec / np.linalg.norm(qvec)
-    w, x, y, z = qvec
-    R = np.array([
-        [
-            1 - 2 * y * y - 2 * z * z,
-            2 * x * y - 2 * z * w,
-            2 * x * z + 2 * y * w
-        ],
-        [
-            2 * x * y + 2 * z * w,
-            1 - 2 * x * x - 2 * z * z,
-            2 * y * z - 2 * x * w
-        ],
-        [
-            2 * x * z - 2 * y * w,
-            2 * y * z + 2 * x * w,
-            1 - 2 * x * x - 2 * y * y
-        ]
-    ])
-    principal_axis.append(R[2, :])
-    t = image_pose[4 : 7]
-    # World-to-Camera pose
-    current_pose = np.zeros([4, 4])
-    current_pose[: 3, : 3] = R
-    current_pose[: 3, 3] = t
-    current_pose[3, 3] = 1
-    # Camera-to-World pose
-    # pose = np.zeros([4, 4])
-    # pose[: 3, : 3] = np.transpose(R)
-    # pose[: 3, 3] = -np.matmul(np.transpose(R), t)
-    # pose[3, 3] = 1
-    poses.append(current_pose)
-    
-    current_points3D_id_to_ndepth = {}
-    for point3D_id in points3D_id_to_2D[idx].keys():
-        p3d = points3D[point3D_id]
-        current_points3D_id_to_ndepth[point3D_id] = (np.dot(R[2, :], p3d) + t[2]) / (.5 * (K[0, 0] + K[1, 1])) 
-    points3D_id_to_ndepth.append(current_points3D_id_to_ndepth)
-principal_axis = np.array(principal_axis)
-angles = np.rad2deg(np.arccos(
-    np.clip(
-        np.dot(principal_axis, np.transpose(principal_axis)),
-        -1, 1
+        image_pose = raw_pose[idx]
+        qvec = image_pose[: 4]
+        qvec = qvec / np.linalg.norm(qvec)
+        w, x, y, z = qvec
+        R = np.array([
+            [
+                1 - 2 * y * y - 2 * z * z,
+                2 * x * y - 2 * z * w,
+                2 * x * z + 2 * y * w
+            ],
+            [
+                2 * x * y + 2 * z * w,
+                1 - 2 * x * x - 2 * z * z,
+                2 * y * z - 2 * x * w
+            ],
+            [
+                2 * x * z - 2 * y * w,
+                2 * y * z + 2 * x * w,
+                1 - 2 * x * x - 2 * y * y
+            ]
+        ])
+        principal_axis.append(R[2, :])
+        t = image_pose[4 : 7]
+        # World-to-Camera pose
+        current_pose = np.zeros([4, 4])
+        current_pose[: 3, : 3] = R
+        current_pose[: 3, 3] = t
+        current_pose[3, 3] = 1
+        # Camera-to-World pose
+        # pose = np.zeros([4, 4])
+        # pose[: 3, : 3] = np.transpose(R)
+        # pose[: 3, 3] = -np.matmul(np.transpose(R), t)
+        # pose[3, 3] = 1
+        poses.append(current_pose)
+        
+        current_points3D_id_to_ndepth = {}
+        for point3D_id in points3D_id_to_2D[idx].keys():
+            p3d = points3D[point3D_id]
+            current_points3D_id_to_ndepth[point3D_id] = (np.dot(R[2, :], p3d) + t[2]) / (.5 * (K[0, 0] + K[1, 1])) 
+        points3D_id_to_ndepth.append(current_points3D_id_to_ndepth)
+    principal_axis = np.array(principal_axis)
+    angles = np.rad2deg(np.arccos(
+        np.clip(
+            np.dot(principal_axis, np.transpose(principal_axis)),
+            -1, 1
+        )
+    ))
+
+
+    # idx = 3
+    # print(intrinsics[idx], poses[idx], idx, depth_paths[idx], image_names[idx], sep="\n")
+    # continue
+
+    # Compute overlap score
+    overlap_matrix = np.full([n_images, n_images], -1.)
+    scale_ratio_matrix = np.full([n_images, n_images], -1.)
+    for idx1 in range(n_images):
+        if image_paths[idx1] is None or depth_paths[idx1] is None:
+            continue
+        for idx2 in range(idx1 + 1, n_images):
+            if image_paths[idx2] is None or depth_paths[idx2] is None:
+                continue
+            matches = (
+                points3D_id_to_2D[idx1].keys() &
+                points3D_id_to_2D[idx2].keys()
+            )
+            min_num_points3D = min(
+                len(points3D_id_to_2D[idx1]), len(points3D_id_to_2D[idx2])
+            )
+
+            # prevent DIV0
+            if len(points3D_id_to_2D[idx1]) == 0:
+                print(f"scene_id {scene_id} has no points3D")
+                continue
+
+            overlap_matrix[idx1, idx2] = len(matches) / len(points3D_id_to_2D[idx1])  # min_num_points3D
+            overlap_matrix[idx2, idx1] = len(matches) / len(points3D_id_to_2D[idx2])  # min_num_points3D
+            if len(matches) == 0:
+                continue
+            points3D_id_to_ndepth1 = points3D_id_to_ndepth[idx1]
+            points3D_id_to_ndepth2 = points3D_id_to_ndepth[idx2]
+            nd1 = np.array([points3D_id_to_ndepth1[match] for match in matches])
+            nd2 = np.array([points3D_id_to_ndepth2[match] for match in matches])
+            min_scale_ratio = np.min(np.maximum(nd1 / nd2, nd2 / nd1))
+            scale_ratio_matrix[idx1, idx2] = min_scale_ratio
+            scale_ratio_matrix[idx2, idx1] = min_scale_ratio
+
+
+    # Count the number of values that are 1, 0, and anything else in the overlap matrix
+    num_ones = np.count_nonzero(overlap_matrix == -1)
+    num_zeros = np.count_nonzero(overlap_matrix == 0)
+    num_other = np.count_nonzero((overlap_matrix != 0) & (overlap_matrix != 1))
+    # Compute the total count of all values in the overlap matrix
+    total_count = overlap_matrix.size
+
+    import math
+    # Print the total count
+    print(f"Total count of all values in the overlap matrix: {total_count}") # , with sqrt {math.sqrt(total_count)}")
+    # Print the counts
+    print(f"Number of values that are -1: {num_ones}")
+    print(f"Number of values that are 0: {num_zeros}")
+    print(f"Number of values that are neither 0 nor 1: {num_other}")
+
+    # Save the data
+    pathSaved = f"/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/{scene_id}.npz"
+
+    np.savez(
+        os.path.join(pathSaved), # args.output_path, '%s.npz' % scene_id),
+        image_paths=image_paths,
+        depth_paths=depth_paths,
+        intrinsics=intrinsics,
+        poses=poses,
+        overlap_matrix=overlap_matrix,
+        scale_ratio_matrix=scale_ratio_matrix,
+        angles=angles,
+        n_points3D=n_points3D,
+        points3D_id_to_2D=points3D_id_to_2D,
+        points3D_id_to_ndepth=points3D_id_to_ndepth
     )
-))
-
-
-# idx = 3
-# print(intrinsics[idx], poses[idx], idx, depth_paths[idx], image_names[idx], sep="\n")
-# exit()
-
-# Compute overlap score
-overlap_matrix = np.full([n_images, n_images], -1.)
-scale_ratio_matrix = np.full([n_images, n_images], -1.)
-for idx1 in range(n_images):
-    if image_paths[idx1] is None or depth_paths[idx1] is None:
-        continue
-    for idx2 in range(idx1 + 1, n_images):
-        if image_paths[idx2] is None or depth_paths[idx2] is None:
-            continue
-        matches = (
-            points3D_id_to_2D[idx1].keys() &
-            points3D_id_to_2D[idx2].keys()
-        )
-        min_num_points3D = min(
-            len(points3D_id_to_2D[idx1]), len(points3D_id_to_2D[idx2])
-        )
-        overlap_matrix[idx1, idx2] = len(matches) / len(points3D_id_to_2D[idx1])  # min_num_points3D
-        overlap_matrix[idx2, idx1] = len(matches) / len(points3D_id_to_2D[idx2])  # min_num_points3D
-        if len(matches) == 0:
-            continue
-        points3D_id_to_ndepth1 = points3D_id_to_ndepth[idx1]
-        points3D_id_to_ndepth2 = points3D_id_to_ndepth[idx2]
-        nd1 = np.array([points3D_id_to_ndepth1[match] for match in matches])
-        nd2 = np.array([points3D_id_to_ndepth2[match] for match in matches])
-        min_scale_ratio = np.min(np.maximum(nd1 / nd2, nd2 / nd1))
-        scale_ratio_matrix[idx1, idx2] = min_scale_ratio
-        scale_ratio_matrix[idx2, idx1] = min_scale_ratio
-
-
-# Count the number of values that are 1, 0, and anything else in the overlap matrix
-num_ones = np.count_nonzero(overlap_matrix == -1)
-num_zeros = np.count_nonzero(overlap_matrix == 0)
-num_other = np.count_nonzero((overlap_matrix != 0) & (overlap_matrix != 1))
-# Compute the total count of all values in the overlap matrix
-total_count = overlap_matrix.size
-
-import math
-# Print the total count
-print(f"Total count of all values in the overlap matrix: {total_count}") # , with sqrt {math.sqrt(total_count)}")
-# Print the counts
-print(f"Number of values that are -1: {num_ones}")
-print(f"Number of values that are 0: {num_zeros}")
-print(f"Number of values that are neither 0 nor 1: {num_other}")
-
-
-
-# Save the data
-pathSaved = "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/d2-net/testingOverlapSF_E_L_P001.npz"
-
-np.savez(
-    os.path.join(pathSaved), # args.output_path, '%s.npz' % scene_id),
-    image_paths=image_paths,
-    depth_paths=depth_paths,
-    intrinsics=intrinsics,
-    poses=poses,
-    overlap_matrix=overlap_matrix,
-    scale_ratio_matrix=scale_ratio_matrix,
-    angles=angles,
-    n_points3D=n_points3D,
-    points3D_id_to_2D=points3D_id_to_2D,
-    points3D_id_to_ndepth=points3D_id_to_ndepth
-)
-print(f"Saved to {pathSaved}")
+    print(f"Saved to {pathSaved}")
