@@ -6,12 +6,11 @@ import numpy as np
 
 import os
 
-parser = argparse.ArgumentParser(description='MegaDepth preprocessing script')
-
-
 """
 python preprocess_scene.py --base_path "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/megadepth" --scene_id "0001" --output_path "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/d2-net/testingOverlap"
 """
+
+parser = argparse.ArgumentParser(description='MegaDepth preprocessing script')
 
 parser.add_argument(
     '--base_path', type=str, required=True,
@@ -78,6 +77,7 @@ for camera in raw:
 # Process points3D.txt
 with open(os.path.join(undistorted_sparse_path, 'points3D.txt'), 'r') as f:
     raw = f.readlines()[3 :]  # skip the header
+
 
 points3D = {}
 for point3D in raw:
@@ -233,25 +233,20 @@ def transform_points(points_3D, pose):
 
 idx = 3
 print(intrinsics[idx], poses[idx], idx, depth_paths[idx], image_names[idx], sep="\n")
+exit()
 # print(points3D_id_to_2D[idx].keys()[:3])
 # print(points3D_id_to_2D[idx].keys(), c) # 64486: [930.804, 389.738]
 # 38322: [155.694, 695.57]
 
-for k, v, in points3D_id_to_2D[idx].items():
-    if k == 64486:
-        print(k, v)
+# for k, v, in points3D_id_to_2D[idx].items():
+#     if k == 64486:
+#         print(k, v)
 
-for k, v, in points3D[idx]:
-    if k == 64486:
-        print(k, v)
-exit()
-# print(points3D[64486]) # [ 0.113039 -2.07074  12.7084  ]
+
+# print(points3D[c]) # [ 0.113039 -2.07074  12.7084  ]
 import h5py
 import numpy as np
 import cv2
-
-keyVal = 64486
-point_2d = points3D_id_to_2D[idx][keyVal] # np.array([930.804, 389.738]) #
 
 K = intrinsics[idx]
 pose = poses[idx]
@@ -280,6 +275,41 @@ def load_depth(depth_path):
 depth_map = load_depth(depth_path)
 print("Depth map shape:", depth_map.shape)
 
+# print(depth_map)
+# # Save numpy array to text file
+# output_file = "/homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/d2-net/output.txt"
+# np.savetxt(output_file, depth_map, delimiter=",")
+
+# Print the path of the output file
+# # print("Output file path:", output_file)
+
+# count = 0
+# # Count zeros
+# no_zero_count = np.count_nonzero(depth_map != 0)
+
+# zero_count = np.count_nonzero(depth_map == 0)
+# for i in range(depth_map.shape[0]):
+#     for j in range(depth_map.shape[1]):
+#         if count == 3:
+#             break
+
+#         if depth_map[i, j] != 0:
+#             count +=1
+#             print("Depth value:", depth_map[i, j])
+#             print("Coordinate:", (j, i))
+
+
+# print("Number of zeros:", zero_count)
+
+# print("Number of NON zeros:", no_zero_count)
+"""
+Depth map shape: (1280, 958)
+Depth value: 6.577873
+Coordinate: (13, 410)
+"""
+
+# print(depth_map[390][930])
+
 # Function to load the image
 def load_image(image_path):
     image = cv2.imread(image_path)
@@ -289,6 +319,36 @@ def load_image(image_path):
 image = load_image(image_path)
 print("Image shape:", image.shape)
 
+print(image_path)
+
+"""
+HOUSTON:  85549 902 419 8.158591
+HOUSTON:  45260 148 474 6.530198
+HOUSTON:  85532 156 696 6.584607
+HOUSTON:  38322 156 696 6.584607
+HOUSTON:  46605 422 825 61.06321
+HOUSTON:  46606 422 825 61.06321
+HOUSTON:  68331 735 915 9.346422
+HOUSTON:  54411 828 547 8.5219755
+"""
+keyVal = 85549
+print("HOUSTON:  85549 902 419 8.158591")
+# keys = points3D_id_to_2D[idx].keys()
+# for key in keys:
+#     unround_arr = points3D_id_to_2D[idx][key]
+#     arr = np.round(unround_arr).astype(int)
+#     i = arr[0].round()
+#     j = arr[1]
+#     if depth_map[j, i] != 0:
+#         print("HOUSTON: ", key, i, j, depth_map[j, i])
+# print ("NO FOUND")
+# exit()
+
+point_2d = points3D_id_to_2D[idx][keyVal] # np.array([930.804, 389.738]) #
+print(point_2d)
+
+ground_truth_3d = points3D[keyVal] # print(points3D[64486])
+
 # Round the 2D point for indexing
 rounded_point_2d = np.round(point_2d).astype(int)
 
@@ -296,25 +356,43 @@ rounded_point_2d = np.round(point_2d).astype(int)
 depth_value = depth_map[rounded_point_2d[1], rounded_point_2d[0]]
 
 # Convert the 2D point to 3D using the depth value
+# print("rounded_point_2d:", rounded_point_2d)
+# print("depth_value:", depth_value)
+# print("K:", K)
+# print("pose:", pose)
+# print(K[0, 2])
+# print(K[0, 0])
+# print(K[1, 2])
+# print(K[1, 1])
+
 x = (rounded_point_2d[0] - K[0, 2]) * depth_value / K[0, 0]
 y = (rounded_point_2d[1] - K[1, 2]) * depth_value / K[1, 1]
 z = depth_value
 point_3d_camera = np.array([x, y, z])
+print("3d point before trnasofmr", point_3d_camera)
 
 # Transform the 3D point to world coordinates
 point_3d_world = transform_points(point_3d_camera, pose)
 
 # Print the transformed 3D point
 print("Transformed 3D point in world coordinates:", point_3d_world)
+print("ground truth", ground_truth_3d)
 
-# Ground truth 3D point for comparison
-ground_truth_3d = np.array([0.113039, -2.07074, 12.7084]) #points3D[keyVal] # 
+# # Ground truth 3D point for comparison
+# for k, v in points3D.items():
+#     if point_3d_world[0] in v or point_3d_world[1] in v:
+#         print("found contain")
+#         print(k, v)
 
 # Compare
 error = np.linalg.norm(point_3d_world - ground_truth_3d)
 print("Error compared to ground truth:", error)
 
+print("\n\n\n")
+print(points3D_id_to_2D[0].keys())
+print(points3D_id_to_2D[0])
 exit()
+
 # Compute overlap score
 overlap_matrix = np.full([n_images, n_images], -1.)
 scale_ratio_matrix = np.full([n_images, n_images], -1.)
@@ -351,19 +429,19 @@ ground_truth_matrix = np.load(f"/homes/tp4618/Documents/bitbucket/SuperGlueThesi
 comparison = np.isclose(overlap_matrix, ground_truth_matrix, atol=0.01)
 print(f"all same is: {np.all(comparison)}")
 
-# np.savez(
-#     os.path.join(args.output_path, '%s.npz' % scene_id),
-#     image_paths=image_paths,
-#     depth_paths=depth_paths,
-#     intrinsics=intrinsics,
-#     poses=poses,
-#     overlap_matrix=overlap_matrix,
-#     scale_ratio_matrix=scale_ratio_matrix,
-#     angles=angles,
-#     n_points3D=n_points3D,
-#     points3D_id_to_2D=points3D_id_to_2D,
-#     points3D_id_to_ndepth=points3D_id_to_ndepth
-# )
+# # np.savez(
+# #     os.path.join(args.output_path, '%s.npz' % scene_id),
+# #     image_paths=image_paths,
+# #     depth_paths=depth_paths,
+# #     intrinsics=intrinsics,
+# #     poses=poses,
+# #     overlap_matrix=overlap_matrix,
+# #     scale_ratio_matrix=scale_ratio_matrix,
+# #     angles=angles,
+# #     n_points3D=n_points3D,
+# #     points3D_id_to_2D=points3D_id_to_2D,
+# #     points3D_id_to_ndepth=points3D_id_to_ndepth
+# # )
 
 
 # import argparse
