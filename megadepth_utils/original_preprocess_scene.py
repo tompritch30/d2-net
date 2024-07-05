@@ -272,13 +272,19 @@ for scene_id in directory_list:
 
             # prevent DIV0
             if len(points3D_id_to_2D[idx1]) == 0:
-                print(f"scene_id {scene_id} has no points3D")
+                print(f"scene_id {scene_id} has no points3D for idx1 {idx1}")
                 continue
-
+        
+            if len(points3D_id_to_2D[idx2]) == 0:
+                print(f"scene_id {scene_id} has no points3D for idx1 {idx2}")
+                continue
+            
             overlap_matrix[idx1, idx2] = len(matches) / len(points3D_id_to_2D[idx1])  # min_num_points3D
             overlap_matrix[idx2, idx1] = len(matches) / len(points3D_id_to_2D[idx2])  # min_num_points3D
+            
             if len(matches) == 0:
                 continue
+
             points3D_id_to_ndepth1 = points3D_id_to_ndepth[idx1]
             points3D_id_to_ndepth2 = points3D_id_to_ndepth[idx2]
             nd1 = np.array([points3D_id_to_ndepth1[match] for match in matches])

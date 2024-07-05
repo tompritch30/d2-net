@@ -52,3 +52,171 @@ Number of values that are -1: 19
 Number of values that are 0: 0
 Number of values that are neither 0 nor 1: 361
 Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_E_L_P009.npz
+scene_id SFW_E_R_P006 has no points3D for idx1 1
+scene_id SFW_E_R_P006 has no points3D for idx1 2
+scene_id SFW_E_R_P006 has no points3D for idx1 1
+scene_id SFW_E_R_P006 has no points3D for idx1 1
+scene_id SFW_E_R_P006 has no points3D for idx1 2
+Total count of all values in the overlap matrix: 16
+Number of values that are -1: 14
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 14
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_E_R_P006.npz
+Total count of all values in the overlap matrix: 4
+Number of values that are -1: 2
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 2
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_L_P013.npz
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_H_R_P011/mvs_output/cameras.txt
+Total count of all values in the overlap matrix: 527076
+Number of values that are -1: 726
+Number of values that are 0: 463274
+Number of values that are neither 0 nor 1: 63802
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_R_P018.npz
+Total count of all values in the overlap matrix: 4
+Number of values that are -1: 2
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 2
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_E_L_P003.npz
+Total count of all values in the overlap matrix: 151321
+Number of values that are -1: 389
+Number of values that are 0: 101654
+Number of values that are neither 0 nor 1: 49667
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_E_L_P011.npz
+Total count of all values in the overlap matrix: 65025
+Number of values that are -1: 255
+Number of values that are 0: 44392
+Number of values that are neither 0 nor 1: 20633
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_H_R_P002.npz
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_L_P003/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_R_P000/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_R_P007/mvs_output/cameras.txt
+Total count of all values in the overlap matrix: 230400
+Number of values that are -1: 480
+Number of values that are 0: 182320
+Number of values that are neither 0 nor 1: 48080
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_L_P014.npz
+Total count of all values in the overlap matrix: 467856
+Number of values that are -1: 684
+Number of values that are 0: 394460
+Number of values that are neither 0 nor 1: 73396
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_R_P012.npz
+Total count of all values in the overlap matrix: 409600
+Number of values that are -1: 640
+Number of values that are 0: 292844
+Number of values that are neither 0 nor 1: 116756
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_E_L_P004.npz
+Total count of all values in the overlap matrix: 9
+Number of values that are -1: 3
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 7
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_H_L_P001.npz
+Total count of all values in the overlap matrix: 87616
+Number of values that are -1: 296
+Number of values that are 0: 63982
+Number of values that are neither 0 nor 1: 23634
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_H_R_P004.npz
+Total count of all values in the overlap matrix: 935089
+Number of values that are -1: 967
+Number of values that are 0: 633034
+Number of values that are neither 0 nor 1: 302055
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_E_L_P004.npz
+Total count of all values in the overlap matrix: 715716
+Number of values that are -1: 846
+Number of values that are 0: 592766
+Number of values that are neither 0 nor 1: 122950
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_E_R_P001.npz
+Total count of all values in the overlap matrix: 157609
+Number of values that are -1: 397
+Number of values that are 0: 80416
+Number of values that are neither 0 nor 1: 77193
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_E_R_P008.npz
+Total count of all values in the overlap matrix: 4
+Number of values that are -1: 2
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 2
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_L_P015.npz
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_H_R_P013/mvs_output/cameras.txt
+Total count of all values in the overlap matrix: 142884
+Number of values that are -1: 378
+Number of values that are 0: 85374
+Number of values that are neither 0 nor 1: 57510
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_E_L_P005.npz
+Total count of all values in the overlap matrix: 4
+Number of values that are -1: 2
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 2
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_H_L_P002.npz
+Total count of all values in the overlap matrix: 234256
+Number of values that are -1: 484
+Number of values that are 0: 111486
+Number of values that are neither 0 nor 1: 122770
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_H_R_P005.npz
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_L_P005/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_R_P002/mvs_output/cameras.txt
+Total count of all values in the overlap matrix: 16
+Number of values that are -1: 4
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 11
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_E_R_P009.npz
+Total count of all values in the overlap matrix: 169
+Number of values that are -1: 13
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 127
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_L_P016.npz
+Total count of all values in the overlap matrix: 169
+Number of values that are -1: 13
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 169
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_R_P014.npz
+Total count of all values in the overlap matrix: 210681
+Number of values that are -1: 459
+Number of values that are 0: 174268
+Number of values that are neither 0 nor 1: 36413
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_E_L_P007.npz
+Total count of all values in the overlap matrix: 101124
+Number of values that are -1: 318
+Number of values that are 0: 79548
+Number of values that are neither 0 nor 1: 21576
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_H_L_P004.npz
+Total count of all values in the overlap matrix: 90000
+Number of values that are -1: 300
+Number of values that are 0: 37478
+Number of values that are neither 0 nor 1: 52522
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_H_R_P006.npz
+Total count of all values in the overlap matrix: 36
+Number of values that are -1: 6
+Number of values that are 0: 2
+Number of values that are neither 0 nor 1: 34
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_E_L_P006.npz
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_R_P003/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_H_L_P010/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_H_L_P017/mvs_output/cameras.txt
+scene_id SFW_H_R_P015 has no points3D for idx1 0
+scene_id SFW_H_R_P015 has no points3D for idx1 0
+scene_id SFW_H_R_P015 has no points3D for idx1 1
+Total count of all values in the overlap matrix: 9
+Number of values that are -1: 9
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 9
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_R_P015.npz
+Total count of all values in the overlap matrix: 4
+Number of values that are -1: 2
+Number of values that are 0: 0
+Number of values that are neither 0 nor 1: 2
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_E_L_P008.npz
+Total count of all values in the overlap matrix: 234256
+Number of values that are -1: 484
+Number of values that are 0: 107944
+Number of values that are neither 0 nor 1: 126312
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SF_H_L_P005.npz
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_L_P000/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_L_P007/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_E_R_P004/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_H_L_P011/mvs_output/cameras.txt
+Cameras.txt does not exist /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/colmap/SFW_H_L_P018/mvs_output/cameras.txt
+Total count of all values in the overlap matrix: 104976
+Number of values that are -1: 324
+Number of values that are 0: 17542
+Number of values that are neither 0 nor 1: 87434
+Saved to /homes/tp4618/Documents/bitbucket/SuperGlueThesis/external/glue-factory/data/syntheticForestData/overlapColmap/SFW_H_R_P016.npz
